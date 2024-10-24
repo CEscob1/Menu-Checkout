@@ -1,8 +1,13 @@
 import React from "react";
 import { Navbar, Nav, Button } from "react-bootstrap";
+import {useNavigate} from 'react-router-dom'
 import shoppingCart from './assets/Shopping_cart.png';
 import logout from './assets/logout.png';
 function Header() {
+  const navigate = useNavigate();
+  const handleCartClick = () =>{
+    navigate('/checkout')
+  }
     return (
         <header>
           <Navbar bg="white" expand="lg">
@@ -34,6 +39,7 @@ function Header() {
                   marginRight: '20px'
                 }}
                 onFocus={(e) => e.target.blur()} 
+                onClick={handleCartClick}
               >
                 <img src={shoppingCart} alt="Carrito" style={{ width: '65px', height: '65px' }} /> 
                 <span>Ver carrito</span>

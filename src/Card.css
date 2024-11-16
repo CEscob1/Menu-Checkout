@@ -1,3 +1,13 @@
+.card-container {
+    display: flex;
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: flex-start; /* Alineación superior para evitar demasiado espacio vertical */
+    min-height: 100vh; /* Ocupa toda la altura de la pantalla */
+    background-color: #f4f4f4; /* Fondo opcional */
+    padding: 10px; /* Espaciado alrededor */
+    box-sizing: border-box;
+}
+
 .card {
     background-color: #d4e7e1; 
     border-radius: 15px; 
@@ -8,6 +18,17 @@
     display: flex; 
     flex-direction: row; 
     align-items: center; 
+}
+.card-grid {
+    display: flex;
+    flex-direction: column; /* Mantener las tarjetas en columna */
+    justify-content: flex-start; /* Alineación superior */
+    align-items: center; /* Centra horizontalmente las tarjetas */
+    max-height: 60vh;
+    overflow-y: auto;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 10px;
 }
 
 .card-content {

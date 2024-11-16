@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, Form } from "react-bootstrap";
@@ -9,6 +9,7 @@ import {
   increaseQuantity,
   decreaseQuantity,
   clearCart,
+  confirmOrder,
 } from "./store";
 import "./Checkout.css";
 
@@ -16,39 +17,18 @@ function Checkout() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
+  const totalAmount = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [isFormValid, setIsFormValid] = useState(false);
 
-  useEffect(() => {
-    setIsFormValid(
-      name.trim() !== "" && email.trim() !== "" && cartItems.length > 0
-    );
-  }, [name, email, cartItems]);
-
-  const handleBack = () => {
-    navigate("/");
-  };
-
-  const handleRemove = (id) => {
-    dispatch(removeItem(id));
-  };
-
-  const handleIncrease = (id) => {
-    dispatch(increaseQuantity(id));
-  };
-
-  const handleDecrease = (id) => {
-    dispatch(decreaseQuantity(id));
-  };
-
-  const totalAmount = cartItems.reduce((total, item) => {
-    const itemTotal = item.price * item.quantity || 0;
-    return total + itemTotal;
-  }, 0);
+  const handleBack = () => navigate("/");
 
   const handleConfirmOrder = () => {
-    if (!isFormValid) {
+    if (!name.trim() || !email.trim() || cartItems.length === 0) {
       alert(
         "Por favor, complete todos los campos y asegúrese de que haya artículos en el carrito."
       );
@@ -66,10 +46,9 @@ function Checkout() {
       email: email,
     };
 
-    // Muestra el JSON en la consola
-    console.log("Order JSON:", JSON.stringify(orderDetails, null, 2));
+    dispatch(confirmOrder(orderDetails));
+    dispatch(clearCart());
 
-    // Popup con la información de la orden
     alert(`
       No. de Orden: ${orderDetails.orderID}
       Descripción: ${orderDetails.detallePedido
@@ -79,8 +58,7 @@ function Checkout() {
       Total a Pagar: Q${orderDetails.precioTotal}
     `);
 
-    // Vaciar el carrito después de confirmar la orden
-    dispatch(clearCart());
+    navigate("/editOrder");
   };
 
   return (
@@ -109,9 +87,9 @@ function Checkout() {
               <CheckoutCard
                 key={item.id}
                 item={item}
-                onRemove={handleRemove}
-                onIncrease={handleIncrease}
-                onDecrease={handleDecrease}
+                onRemove={(id) => dispatch(removeItem(id))}
+                onIncrease={(id) => dispatch(increaseQuantity(id))}
+                onDecrease={(id) => dispatch(decreaseQuantity(id))}
               />
             ))
           ) : (
@@ -149,7 +127,7 @@ function Checkout() {
             <Button
               variant="outline-danger"
               onClick={handleBack}
-              disabled={cartItems.length === 0} // Deshabilitar si no hay elementos
+              disabled={cartItems.length === 0}
             >
               Cancelar Orden
             </Button>
@@ -157,7 +135,6 @@ function Checkout() {
               variant="success"
               onClick={handleConfirmOrder}
               style={{ marginLeft: "20px" }}
-              disabled={!isFormValid} // Deshabilitar si el formulario no es válido
             >
               Confirmar Orden
             </Button>

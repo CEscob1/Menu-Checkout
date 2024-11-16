@@ -9,7 +9,14 @@ const categories = [...new Set(MenuItems.map(item => item.category))].map(catego
 }));
 
 const Category = () => {
-    const [selectedCategory, setSelectedCategory] = React.useState(null);
+    const getDefaultCategory = () => {
+        const currentHour = new Date().getHours();
+        if (currentHour < 11) return "Desayuno"; 
+        if (currentHour < 17) return "Almuerzo"; 
+        return "Snacks"; 
+    };
+
+    const [selectedCategory, setSelectedCategory] = React.useState(getDefaultCategory()); // Estado inicial con lógica de hora
     const categoryScrollRef = React.useRef();
 
     const handleCategoryClick = (category) => {

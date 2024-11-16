@@ -3,11 +3,17 @@ import { Navbar, Nav, Button } from "react-bootstrap";
 import {useNavigate} from 'react-router-dom'
 import shoppingCart from './assets/Shopping_cart.png';
 import logout from './assets/logout.png';
+import editar from './assets/editar.png'
 function Header() {
   const navigate = useNavigate();
   const handleCartClick = () =>{
     navigate('/checkout')
   }
+
+  const handleEditOrdersClick = () => {
+    navigate("/editOrder"); 
+  };
+
     return (
         <header>
           <Navbar bg="white" expand="lg">
@@ -27,6 +33,23 @@ function Header() {
                 Salir
               </Button>
             </Navbar.Brand>
+            <Nav className="mx-auto"> {/* Botón centrado */}
+          <Button
+            variant="outline-warning"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              outline: "none",
+              boxShadow: "none",
+              
+            }}
+            onClick={handleEditOrdersClick}
+          >
+            <img src={editar} alt="Editar Órdenes" style={{ width: "65px", height: "65px" }} />
+            <span>Editar Órdenes</span>
+          </Button>
+        </Nav>
             <Nav className="ml-auto" style={{ marginLeft: 'auto' }}> 
               <Button 
                 variant="outline-primary"  

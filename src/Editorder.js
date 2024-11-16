@@ -22,6 +22,7 @@ function EditOrders() {
   };
 
   useEffect(() => {
+    // Ordena las órdenes de forma descendente (más recientes primero)
     const updatedOrders = confirmedOrders.map((order) => {
       const orderTime = new Date(order.fechaHora).getTime();
       const currentTime = Date.now();
@@ -31,8 +32,17 @@ function EditOrders() {
       return { ...order, isActive };
     });
 
-    setActiveOrders(updatedOrders);
+    // Invertir el arreglo para que las órdenes más recientes estén primero
+    setActiveOrders(updatedOrders.reverse());
   }, [confirmedOrders]);
+
+  useEffect(() => {
+    // Lleva el scroll automáticamente al inicio
+    const container = document.querySelector('.order-list');
+    if (container) {
+      container.scrollTop = 0;
+    }
+  }, [activeOrders]); // Ejecuta cada vez que activeOrders cambie
 
   const handleEditOrder = (orderID) => {
     console.log("Editando la orden con ID:", orderID);

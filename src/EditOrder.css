@@ -44,11 +44,9 @@ header {
 
 /* Lista de órdenes */
 .order-list {
-  max-height: 60vh;
-  overflow-y: auto;
-  width: 100%;
-  box-sizing: border-box;
-  border-radius: 10px;
+  max-height: 60vh; /* Limita la altura del contenedor */
+  overflow-y: auto; /* Permite el desplazamiento vertical */
+  padding: 10px; /* Espaciado dentro del contenedor */
 }
 
 /* Tarjeta de orden */

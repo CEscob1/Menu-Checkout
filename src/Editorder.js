@@ -22,17 +22,17 @@ function EditOrders() {
   };
 
   useEffect(() => {
-    // Ordena las órdenes de forma descendente (más recientes primero)
+    // Actualiza las órdenes con su estado de actividad
     const updatedOrders = confirmedOrders.map((order) => {
       const orderTime = new Date(order.fechaHora).getTime();
       const currentTime = Date.now();
       const timeDiff = currentTime - orderTime;
-      const isActive = timeDiff < 5 * 60 * 1000; // Verificar si la orden está dentro de los 5 minutos
+      const isActive = timeDiff < 5 * 60 * 1000; // 5 minutos
 
       return { ...order, isActive };
     });
 
-    // Invertir el arreglo para que las órdenes más recientes estén primero
+    // Ordena las órdenes de forma descendente (más recientes primero)
     setActiveOrders(updatedOrders.reverse());
   }, [confirmedOrders]);
 
@@ -42,15 +42,15 @@ function EditOrders() {
     if (container) {
       container.scrollTop = 0;
     }
-  }, [activeOrders]); // Ejecuta cada vez que activeOrders cambie
+  }, [activeOrders]);
 
   const handleEditOrder = (orderID) => {
     console.log("Editando la orden con ID:", orderID);
-    // Aquí puedes añadir lógica para editar la orden
+    navigate(`/checkouteditorder/${orderID}`); // Navega a la pantalla de edición específica
   };
 
   const handleBack = () => {
-    navigate('/'); // Cambiar la ruta según sea necesario
+    navigate('/'); // Cambia la ruta según sea necesario
   };
 
   return (
@@ -69,7 +69,7 @@ function EditOrders() {
           Regresar
         </Button>
         <h2 style={{ fontWeight: "bold", marginTop: "20px" }}>
-          Ordenes confirmadas
+          Órdenes Confirmadas
         </h2>
       </header>
       <div className="edit-order-container">
@@ -88,7 +88,10 @@ function EditOrders() {
                   </button>
                 </div>
                 <p>
-                  Descripción: {order.detallePedido.map(item => `${item.description} (x${item.quantity})`).join(", ")}
+                  Descripción:{' '}
+                  {order.detallePedido
+                    .map((item) => `${item.description} (x${item.quantity})`)
+                    .join(", ")}
                 </p>
                 <p>Total a Pagar: Q{order.precioTotal}</p>
                 <p>Fecha y Hora: {formatDate(order.fechaHora)}</p>

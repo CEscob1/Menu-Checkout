@@ -49,7 +49,6 @@ const cartSlice = createSlice({
       state.items = [];
       state.totalAmount = 0;
     },
-    // Nueva acción para agregar una orden confirmada con un timestamp
     confirmOrder: (state, action) => {
       const order = {
         ...action.payload,
@@ -57,13 +56,20 @@ const cartSlice = createSlice({
       };
       state.confirmedOrders.push(order);
     },
-    // Acción para actualizar una orden
     updateOrder: (state, action) => {
       const updatedOrder = action.payload;
       const index = state.confirmedOrders.findIndex(order => order.orderID === updatedOrder.orderID);
       if (index !== -1) {
         state.confirmedOrders[index] = updatedOrder;  // Actualizamos la orden en el arreglo
       }
+    },
+    // Nueva acción para establecer los ítems del carrito
+    setCartItems: (state, action) => {
+      state.items = action.payload;
+      state.totalAmount = action.payload.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
     }
   }
 });
@@ -75,7 +81,8 @@ export const {
   decreaseQuantity, 
   clearCart, 
   confirmOrder, 
-  updateOrder 
+  updateOrder, 
+  setCartItems 
 } = cartSlice.actions;
 
 export const store = configureStore({

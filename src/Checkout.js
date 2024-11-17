@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button, Form } from "react-bootstrap";
 import Regresar from "./assets/Regresar.png";
 import CheckoutCard from "./CheckoutCard";
@@ -10,12 +10,16 @@ import {
   decreaseQuantity,
   clearCart,
   confirmOrder,
+  setCartItems,
 } from "./store";
 import "./Checkout.css";
 
 function Checkout() {
   const navigate = useNavigate();
+  const location = useLocation();  // Usamos useLocation para obtener los parámetros de consulta
   const dispatch = useDispatch();
+
+  const confirmedOrders = useSelector((state) => state.cart.confirmedOrders);
   const cartItems = useSelector((state) => state.cart.items);
   const totalAmount = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -25,20 +29,35 @@ function Checkout() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
+  const queryParams = new URLSearchParams(location.search); // Obtenemos los parámetros de la URL
+  const mode = queryParams.get("mode");
+  const orderID = queryParams.get("orderID");
+
+  useEffect(() => {
+    if (mode === "edit" && orderID) {
+      const orderToEdit = confirmedOrders.find(
+        (order) => order.orderID === parseInt(orderID, 10)
+      );
+      if (orderToEdit) {
+        dispatch(setCartItems(orderToEdit.detallePedido));
+        setName(orderToEdit.nombre);
+        setEmail(orderToEdit.email);
+      }
+    }
+  }, [mode, orderID, confirmedOrders, dispatch]);
+
   const handleBack = () => navigate("/");
 
   const handleConfirmOrder = () => {
     if (!name.trim() || !email.trim() || cartItems.length === 0) {
-      alert(
-        "Por favor, complete todos los campos y asegúrese de que haya artículos en el carrito."
-      );
+      alert("Por favor, complete todos los campos y asegúrese de que haya artículos en el carrito.");
       return;
     }
 
-    const orderID = Math.floor(Math.random() * 1000000);
+    const orderIDToUse = mode === "edit" ? parseInt(orderID, 10) : Math.floor(Math.random() * 1000000);
     const timestamp = new Date().toISOString();
     const orderDetails = {
-      orderID,
+      orderID: orderIDToUse,
       detallePedido: cartItems,
       precioTotal: totalAmount.toFixed(2),
       fechaHora: timestamp,
@@ -46,17 +65,13 @@ function Checkout() {
       email: email,
     };
 
-    dispatch(confirmOrder(orderDetails));
-    dispatch(clearCart());
-
-    alert(`
-      No. de Orden: ${orderDetails.orderID}
-      Descripción: ${orderDetails.detallePedido
-        .map((item) => `${item.description} (x${item.quantity})`)
-        .join(", ")}
-      Quien recibe: ${orderDetails.nombre}
-      Total a Pagar: Q${orderDetails.precioTotal}
-    `);
+    if (mode === "edit") {
+      alert(`Orden #${orderIDToUse} actualizada con éxito.`);
+    } else {
+      dispatch(confirmOrder(orderDetails));
+      dispatch(clearCart());
+      alert(`Orden #${orderDetails.orderID} confirmada con éxito.`);
+    }
 
     navigate("/editOrder");
   };
@@ -77,7 +92,7 @@ function Checkout() {
           Regresar
         </Button>
         <h2 style={{ fontWeight: "bold", marginTop: "20px" }}>
-          Detalle De Orden
+          {mode === "edit" ? "Editar Orden" : "Detalle De Orden"}
         </h2>
       </header>
       <div className="checkout-container">
@@ -101,9 +116,7 @@ function Checkout() {
         </h3>
       </div>
       <div className="data-container">
-        <h4>
-          <strong>Datos personales</strong>
-        </h4>
+        <h4><strong>Datos personales</strong></h4>
         <Form>
           <Form.Group controlId="formName">
             <Form.Label>Nombre quien recibe:</Form.Label>
@@ -129,14 +142,14 @@ function Checkout() {
               onClick={handleBack}
               disabled={cartItems.length === 0}
             >
-              Cancelar Orden
+              Cancelar
             </Button>
             <Button
               variant="success"
               onClick={handleConfirmOrder}
               style={{ marginLeft: "20px" }}
             >
-              Confirmar Orden
+              {mode === "edit" ? "Actualizar Orden" : "Confirmar Orden"}
             </Button>
           </div>
         </Form>

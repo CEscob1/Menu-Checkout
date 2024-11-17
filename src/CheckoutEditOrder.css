@@ -1,0 +1,30 @@
+.checkout-edit-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .edit-form label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .edit-cart .cart-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .total-section {
+    margin-top: 20px;
+    font-size: 1.2em;
+  }
+  
+  .edit-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+  }

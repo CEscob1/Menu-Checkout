@@ -46,7 +46,7 @@ function EditOrders() {
 
   const handleEditOrder = (orderID) => {
     console.log("Editando la orden con ID:", orderID);
-    navigate(`/checkouteditorder/${orderID}`); // Navega a la pantalla de edición específica
+    navigate(`/checkout/edit/${orderID}`); // Navega a la pantalla de edición específica
   };
 
   const handleBack = () => {
